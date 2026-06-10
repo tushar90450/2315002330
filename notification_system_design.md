@@ -1,26 +1,30 @@
-# Vehicle Maintenance & Logging System - Technical Design
+# Comprehensive Technical Documentation & Architecture Report
 
-## 1. System Architecture Diagram Representation
-Client Request ──> Local Endpoint (:5000) ──> Controller Layer ──> Reusable Middleware ──> Central Log API (:4.224.186.213)
+---
 
-## 2. Framework & Constraints Compliance
-- **Core Server Framework:** Node.js, Express.js.
-- **Middleware Protocol:** Decentralized interceptor logic utilizing secure Axios pipelines.
-- **Payload Rules Enforcement:** Direct formatting filters applied via JavaScript object normalization ensuring strict lowercase values across variables.
+## Part 1: Vehicle Maintenance Scheduler (Question 1)
 
-## 3. Local Endpoint Matrix
+### 1. Algorithm Overview
+The core problem requires selecting an optimal subset of maintenance tasks within a constrained time frame (`availableHours`) to maximize the cumulative operational impact. This problem maps directly onto the classic **0/1 Knapsack Optimization Algorithm**. 
 
-### Fetch All Maintenance Schedules
-- **Endpoint:** `http://localhost:5000/api/jobs`
-- **Method:** `GET`
-- **Response Format:** Array of JSON tasks.
+* **Time Complexity:** $\mathcal{O}(N \times W)$ where $N$ is the number of maintenance tasks and $W$ is the total `availableHours`.
+* **Space Complexity:** $\mathcal{O}(N \times W)$ for the dynamic programming calculation matrix table.
 
-### Create New Scheduled Event
-- **Endpoint:** `http://localhost:5000/api/jobs`
-- **Method:** `POST`
-- **Payload Contract:**
-  ```json
-  {
-    "vehicle": "string",
-    "issue": "string"
+### 2. Microservice Endpoint Integration
+The backend serves this logic via a structured REST endpoint that reads parameter streams dynamically and passes the computational results through an automated validation middleware logger.
+
+* **Target URL Pattern:** `GET http://localhost:5000/api/schedule/:depotID`
+* **Response Signature (Status 200 OK):**
+```json
+{
+  "depotID": 1,
+  "availableHours": 10,
+  "optimizedResults": {
+    "totalImpact": 18,
+    "totalDuration": 8,
+    "jobsSelected": [
+      { "TaskId": "mock-3", "Duration": 3, "Impact": 8 },
+      { "TaskId": "mock-1", "Duration": 5, "Impact": 10 }
+    ]
   }
+}
